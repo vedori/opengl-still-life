@@ -1,0 +1,6 @@
+[submodule "CS330-App\\external\\cmakelibs\\glfw"]
+	path = CS330-App\\external\\cmakelibs\\glfw
+	url = git@github.com:glfw/glfw.git
+[submodule "CS330-App/external/shared/glm"]
+	path = CS330-App/external/shared/glm
+	url = git@github.com:g-truc/glm.git
