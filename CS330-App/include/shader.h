@@ -1,18 +1,14 @@
-//
-// Created by phil on 1/4/2023.
-//
 #pragma once
-#include <glad/glad.h>
-
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <glad/glad.h>
 
 class shader {
 public:
     // the program ID
-    unsigned int ID {};
+    GLuint ID;
 
 public:
     // constructor reads and builds the shader
@@ -22,13 +18,14 @@ public:
     void use() const;
 
     // utility functions to set values of uniform variables
-    void setBool(const std::string &name, bool value) const;
-    void setInt(const std::string &name, int value) const;
-    void setFloat(const std::string &name, float value) const;
+    void setBool(const char *name, bool value) const;
+    void setInt(const char *name, int value) const;
+    void setFloat(const char *name, float value) const;
 
 private:
-    void compileVShader(unsigned int *vertex, const char *code, char *log);
-    void compileFShader(unsigned int *fragmentLoc, const char *code, char *log);
-    void linkProgram(char *log);
-    const char *readShaderFile(const char *shaderPath);
+    // utility functions to compile and link shaders to the shaderProgram
+    static std::string readShaderFile(const char *shaderPath);
+    static void compileVShader(unsigned int *vertex, const char *code, char *log);
+    static void compileFShader(unsigned int *fragmentLoc, const char *code, char *log);
+    void linkProgram(char *log) const;
 };

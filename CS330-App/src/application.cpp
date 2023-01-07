@@ -15,8 +15,8 @@ void Application::Run()
     // load the mesh data
     initMesh();
 
-    // shaders specify attributes for the mesh data
-    shader rainbowShader{"shaders/shader.vs", "shaders/shader.fs"};
+    // shader specify attributes for the mesh data
+    shader rainbowTrigShader {"shaders/shader.vs", "shaders/shader.fs"};
 
     // render loop
 	while (true) {
@@ -26,8 +26,8 @@ void Application::Run()
 
         input();
 
-        // use shaders
-        rainbowShader.use();
+        // use shader
+        rainbowTrigShader.use();
 
         draw();
 	}
@@ -97,30 +97,32 @@ void Application::initMesh()
 	};
 
     // bind the VAO and EBO for OpenGL to send mesh data to GPU
-	// the VAO holds all subsequent VBOs
+	// the VAO holds all subsequent VBOs and EBOs
 	glGenVertexArrays(1, &_vertexArrayObject);
 	glBindVertexArray(_vertexArrayObject);
 
     // create VBO for OpenGL to send vertex data to the VAO
-	unsigned int vertexBufferObject;
+	GLuint vertexBufferObject;
 	glGenBuffers(1, &vertexBufferObject);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vertices.size() * sizeof(Vertex)), vertices.data(), GL_STATIC_DRAW);
 
     // create EBO for OpenGL to send index data to GPU to avoid overhead resulting in overlapping lines
-    unsigned int elementBufferObject;
+    GLuint elementBufferObject;
     glGenBuffers(1, &elementBufferObject);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(indices.size() * sizeof(uint32_t)), indices.data(), GL_STATIC_DRAW);
 
-    // OpenGL needs to know how to connect the vertex data to the shader attributes
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
-    glEnableVertexAttribArray(0);
+    // enables OpenGL to know how to connect the shader attributes to the vertex data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(offsetof(Vertex, Position)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(offsetof(Vertex, Color)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(offsetof(Vertex, Normal)));
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(offsetof(Vertex, Uv)));
 
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(GL_FLOAT)));
+    glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
 }
 
 void Application::draw() {
