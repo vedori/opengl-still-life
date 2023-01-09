@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "shader.h"
+#include "mesh.h"
 
 class Application {
 public:
@@ -20,5 +21,5 @@ private:
 	int _width {};
 	int _height {};
 	GLFWwindow* _window {nullptr};
-    GLuint _vertexArrayObject{};
+    Mesh _mesh;
 };

@@ -5,14 +5,15 @@
 #include <iostream>
 #include <glad/glad.h>
 
-class shader {
+class Shader {
 public:
     // the program ID
     GLuint ID;
 
 public:
-    // constructor reads and builds the shader
-    shader(const char *vertexPath, const char *fragmentPath);
+    Shader() = default;
+    // constructor reads and builds the shader from path
+    Shader(const char *vertexPath, const char *fragmentPath);
 
     // use/activate the shader
     void use() const;
@@ -23,9 +24,12 @@ public:
     void setFloat(const char *name, float value) const;
 
 private:
-    // utility functions to compile and link shaders to the shaderProgram
+    // utility functions to compile and link shaders to the shader program
     static std::string readShaderFile(const char *shaderPath);
-    static void compileVShader(unsigned int *vertex, const char *code, char *log);
-    static void compileFShader(unsigned int *fragmentLoc, const char *code, char *log);
+    static void compileVShader(GLuint& vertexShaderID, const char *code, char *log);
+    static void compileFShader(GLuint& fragmentShaderID, const char *code, char *log);
     void linkProgram(char *log) const;
+
+    // the size of the log buffer
+    static const size_t _logSize = 512;
 };
