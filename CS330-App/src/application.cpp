@@ -1,8 +1,10 @@
 #include <iostream>
 #include <utility>
-#include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "application.h"
 #include "types.h"
+
 
 Application::Application(std::string WindowTitle, int Width, int Height) : _applicationName{std::move( WindowTitle )}, _width{ Width }, _height{ Height } {}
 
@@ -12,8 +14,8 @@ void Application::Run()
 		return;
 	}
 
-    // load the mesh data
-    initMesh();
+    // load the mesh and shader data
+    load();
 
     // render loop
 	while (true) {
@@ -48,11 +50,17 @@ bool Application::openWindow()
 	}
 
 	glfwMakeContextCurrent(_window);
+    glfwSetWindowUserPointer(_window, (void*)this);
 
     // this function is called when the application is resized
 	glfwSetFramebufferSizeCallback(_window, [](GLFWwindow* window, int width, int height) {
 		// resizes the window / scene
 		glViewport(0, 0, width, height);
+
+        // update the width and height attributes of the application class
+        auto app = reinterpret_cast<Application *>(glfwGetWindowUserPointer(window));
+        app -> _width = width;
+        app -> _height = height;
 	});
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -60,49 +68,60 @@ bool Application::openWindow()
 		return false;
 	}
 
+    // enables the depth buffer
+    glEnable(GL_DEPTH_TEST);
+
 	return true;
 }
 
-void Application::initMesh()
+void Application::load()
 {
-    std::vector<Vertex> vertices = {
-            {
-                    .Position = {-1.0f, 1.0f, 0.0f},
-                    .Color = {1.0f, 0.0f, 0.0f}
-            },
-            {
-                    .Position = {-1.0f, 0.0f, 0.0f},
-                    .Color = {0.0f, 1.0f, 0.0f}
-            },
-            {
-                    .Color = {0.0f, 0.0f, 1.0f}
-            },
-            {
-                    .Position = {1.0f, 0.0f, 0.0f},
-                    .Color = {1.0f, 0.0f, 0.0f}
-            },
-            {
-                    .Position = {1.0f, -1.0f, 0.0f},
-                    .Color = {0.0f, 1.0f, 0.0f}
-            }
-    };
+    // creates two pyramids
+    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements, glm::vec3{-2.0f, 0.0f, 0.0f});
+    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements, glm::vec3{2.0f, 0.0f, 0.0f});
 
-	std::vector<uint32_t> indices = {
-		0, 1, 2,   // first triangle
-		2, 3, 4    // second triangle
-	};
-
-    // creates two right triangles that share a corner
-    _mesh = Mesh{std::move(vertices), std::move(indices)};
+    // loads shaders
+    _shader = Shader{"shaders/basic_shader.vert", "shaders/basic_shader.frag"};
 }
 
 void Application::draw() {
     // rendering the background
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //drawing the scene
-    _mesh.draw();
+    // draws the first object in wireframe mode
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    // apply matrix transformations and shaders to all the meshes
+    for (auto mesh : _meshes) {
+        // model transforms the objects and sets their positions relative to the origin
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
+        model = glm::translate(model, mesh.GlobalPosition);
+
+        // view sets the camera view and rotates the scene continuously about the y-axis
+        glm::mat4 view = glm::lookAt(glm::vec3(1.0f, 1.3f, 2.0f),
+                                     glm::vec3(0.0f, 0.1f, 0.0f),
+                                     glm::vec3(0.0f, 1.0f, 0.0f));
+        view = glm::rotate(view, static_cast<float>(glfwGetTime() / 2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        // the projection view sets the fov, the aspect ratio and clipping range of the viewing box
+        glm::mat4 projection = glm::mat4(1.0f);
+        projection = glm::perspective(glm::radians(30.0f),
+                                      static_cast<float>(_width) / static_cast<float>(_height),
+                                      0.1f, 100.0f);
+
+        // sends the matrices to the shader
+        _shader.setMat4("model", model);
+        _shader.setMat4("view", view);
+        _shader.setMat4("projection", projection);
+        _shader.use();
+
+        mesh.draw();
+
+        // draws subsequent objects in fill mode
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
 
     // check and call events and swap the buffers
     glfwSwapBuffers(_window);

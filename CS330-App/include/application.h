@@ -12,7 +12,7 @@ public:
 
 private:
     bool openWindow();
-    void initMesh();
+    void load();
     void draw();
     void input();
 
@@ -21,5 +21,6 @@ private:
 	int _width {};
 	int _height {};
 	GLFWwindow* _window {nullptr};
-    Mesh _mesh;
+    std::vector<Mesh> _meshes {};
+    Shader _shader{};
 };

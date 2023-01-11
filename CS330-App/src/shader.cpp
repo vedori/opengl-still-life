@@ -1,8 +1,6 @@
-//
-// Created by phil on 1/4/2023.
-//
 #include "shader.h"
-
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     std::string vShaderCode = readShaderFile(vertexPath);
@@ -13,6 +11,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 
     // shader program
     ID = glCreateProgram();
+
 
     // compile shaders
     GLuint vertexShaderID, fragmentShaderID = 0;
@@ -99,6 +98,8 @@ void Shader::linkProgram(char *log) const {
 }
 
 void Shader::use() const {
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glUseProgram(ID);
 }
 
@@ -112,4 +113,8 @@ void Shader::setInt(const char* name, int value) const {
 
 void Shader::setFloat(const char* name, float value) const {
     glUniform1f(glGetUniformLocation(ID, name), value);
+}
+
+void Shader::setMat4(const char* name, const glm::mat4& value) const {
+    glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(value));
 }

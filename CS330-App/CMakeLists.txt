@@ -25,4 +25,5 @@ target_link_libraries(${PROJECT_NAME}
 
 # copy shaders file to the runtime output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+file(REMOVE ${OUTPUT_DIR}/shaders)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders DESTINATION ${OUTPUT_DIR}/)

@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <glad/glad.h>
+#include "glm/detail/type_mat4x4.hpp"
 
 class Shader {
 public:
@@ -22,6 +23,7 @@ public:
     void setBool(const char *name, bool value) const;
     void setInt(const char *name, int value) const;
     void setFloat(const char *name, float value) const;
+    void setMat4(const char *name, const glm::mat4& value) const;
 
 private:
     // utility functions to compile and link shaders to the shader program
