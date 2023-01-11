@@ -8,10 +8,9 @@
 class Mesh {
 public:
     Mesh() = default;
-    Mesh(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, glm::vec3 globalPosition);
-
+    Mesh(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
     void draw() const;
-    const glm::vec3 GlobalPosition{};
+    GlobalPosition GlobalPosition;
 private:
     GLuint _vertexArrayObject{};
     uint32_t _elementCount {0};

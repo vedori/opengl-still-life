@@ -50,7 +50,7 @@ bool Application::openWindow()
 	}
 
 	glfwMakeContextCurrent(_window);
-    glfwSetWindowUserPointer(_window, (void*)this);
+    glfwSetWindowUserPointer(_window, reinterpret_cast<void*>(this));
 
     // this function is called when the application is resized
 	glfwSetFramebufferSizeCallback(_window, [](GLFWwindow* window, int width, int height) {
@@ -77,8 +77,14 @@ bool Application::openWindow()
 void Application::load()
 {
     // creates two pyramids
-    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements, glm::vec3{-2.0f, 0.0f, 0.0f});
-    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements, glm::vec3{2.0f, 0.0f, 0.0f});
+    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements).GlobalPosition = {
+            .Scale{0.25f, 0.25f, 0.25f},
+            .Translation{-2.0f, 0.0f, 0.0f}
+    };
+    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements).GlobalPosition = {
+            .Scale{0.25f, 0.25f, 0.25f},
+            .Translation{2.0f, 0.0f, 0.0f}
+    };
 
     // loads shaders
     _shader = Shader{"shaders/basic_shader.vert", "shaders/basic_shader.frag"};
@@ -93,13 +99,13 @@ void Application::draw() {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // apply matrix transformations and shaders to all the meshes
-    for (auto mesh : _meshes) {
+    for (auto& mesh : _meshes) {
         // model transforms the objects and sets their positions relative to the origin
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
-        model = glm::translate(model, mesh.GlobalPosition);
+        model = glm::scale(model, mesh.GlobalPosition.Scale);
+        model = glm::translate(model, mesh.GlobalPosition.Translation);
 
-        // view sets the camera view and rotates the scene continuously about the y-axis
+        // sets the camera view and rotates the scene continuously about the y-axis
         glm::mat4 view = glm::lookAt(glm::vec3(1.0f, 1.3f, 2.0f),
                                      glm::vec3(0.0f, 0.1f, 0.0f),
                                      glm::vec3(0.0f, 1.0f, 0.0f));

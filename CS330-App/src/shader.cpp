@@ -98,8 +98,6 @@ void Shader::linkProgram(char *log) const {
 }
 
 void Shader::use() const {
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glUseProgram(ID);
 }
 

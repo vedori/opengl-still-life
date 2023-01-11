@@ -1,6 +1,6 @@
 #include "mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices, glm::vec3 globalPosition) : GlobalPosition(globalPosition) {
+Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices) {
     // bind the VAO and EBO for OpenGL to send mesh data to GPU
     // the VAO holds all subsequent VBOs and EBOs
     glGenVertexArrays(1, &_vertexArrayObject);

@@ -8,6 +8,12 @@ struct Vertex {
     glm::vec2 Uv {1.f, 1.f};
 };
 
+struct GlobalPosition {
+    glm::vec3 Scale {1.0f, 1.0f, 1.0f};
+    glm::vec3 Translation {0.0f, 0.0f, 0.0f};
+    glm::vec3 Rotation {0.0f, 0.0f, 0.0f};
+};
+
 struct Shapes {
     static inline std::vector<Vertex> triangleVertices = {
             {
