@@ -1,6 +1,6 @@
 #include "mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices) {
+Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &elements) {
     // bind the VAO and EBO for OpenGL to send mesh data to GPU
     // the VAO holds all subsequent VBOs and EBOs
     glGenVertexArrays(1, &_vertexArrayObject);
@@ -16,7 +16,7 @@ Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices) {
     GLuint elementBufferObject;
     glGenBuffers(1, &elementBufferObject);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(indices.size() * sizeof(uint32_t)), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(elements.size() * sizeof(uint32_t)), elements.data(), GL_STATIC_DRAW);
 
     // enables OpenGL to know how to connect the shader attributes to the vertex data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(offsetof(Vertex, Position)));
@@ -30,10 +30,10 @@ Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices) {
     glEnableVertexAttribArray(3);
 
     // caches element count
-    _elementCount = indices.size();
+    _elementCount = elements.size();
 }
 
-void Mesh::draw() const {
+void Mesh::Draw() const {
     glBindVertexArray(_vertexArrayObject);
     glDrawElements(GL_TRIANGLES, static_cast<int>(_elementCount), GL_UNSIGNED_INT, nullptr);
 }

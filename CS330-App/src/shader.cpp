@@ -97,22 +97,22 @@ void Shader::linkProgram(char *log) const {
     }
 }
 
-void Shader::use() const {
+void Shader::Activate() const {
     glUseProgram(ID);
 }
 
-void Shader::setBool(const char* name, bool value) const {
+void Shader::SetBool(const char* name, bool value) const {
     glUniform1i(glGetUniformLocation(ID, name), (int)value);
 }
 
-void Shader::setInt(const char* name, int value) const {
+void Shader::SetInt(const char* name, int value) const {
     glUniform1i(glGetUniformLocation(ID, name), value);
 }
 
-void Shader::setFloat(const char* name, float value) const {
+void Shader::SetFloat(const char* name, float value) const {
     glUniform1f(glGetUniformLocation(ID, name), value);
 }
 
-void Shader::setMat4(const char* name, const glm::mat4& value) const {
+void Shader::SetMat4(const char* name, const glm::mat4& value) const {
     glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(value));
 }

@@ -17,13 +17,13 @@ public:
     Shader(const char *vertexPath, const char *fragmentPath);
 
     // use/activate the shader
-    void use() const;
+    void Activate() const;
 
     // utility functions to set values of uniform variables
-    void setBool(const char *name, bool value) const;
-    void setInt(const char *name, int value) const;
-    void setFloat(const char *name, float value) const;
-    void setMat4(const char *name, const glm::mat4& value) const;
+    void SetBool(const char *name, bool value) const;
+    void SetInt(const char *name, int value) const;
+    void SetFloat(const char *name, float value) const;
+    void SetMat4(const char *name, const glm::mat4& value) const;
 
 private:
     // utility functions to compile and link shaders to the shader program
