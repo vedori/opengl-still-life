@@ -18,31 +18,28 @@ struct GlobalPosition {
 };
 
 struct Shapes {
-    static inline std::vector<Vertex> triangleVertices = {
+    static inline std::vector<Vertex> planeVertices = {
             {
-                    .Position = {-1.0f, 1.0f, 0.0f},
-                    .Color = {1.0f, 0.0f, 0.0f}
+                    .Position = {0.0f, 0.0f, 0.0f},
+                    .Color = {0.0f, 0.0f, 0.0f}
             },
             {
-                    .Position = {-1.0f, 0.0f, 0.0f},
-                    .Color = {0.0f, 1.0f, 0.0f}
-            },
-            {
-                    .Color = {0.0f, 0.0f, 1.0f}
-            },
-            {
-                    .Position = {1.0f, -1.0f, 0.0f},
-                    .Color = {0.0f, 1.0f, 0.0f}
+                    .Position = {0.0f, 0.0f, 1.0f},
+                    .Color = {0.0f, 0.0f, 0.0f}
             },
             {
                     .Position = {1.0f, 0.0f, 0.0f},
-                    .Color = {1.0f, 0.0f, 0.0f}
-            }
+                    .Color = {0.0f, 0.0f, 0.0f}
+            },
+            {
+                    .Position = {1.0f, 0.0f, 1.0f},
+                    .Color = {0.0f, 0.0f, 0.0f}
+            },
     };
 
-    static inline std::vector<uint32_t> triangleElements = {
-            0, 1, 2,   // first triangle
-            2, 3, 4    // second triangle
+    static inline std::vector<uint32_t> planeElements = {
+            0, 1, 2,
+            2, 3, 1
     };
 
     static inline std::vector<Vertex> pyramidVertices {};
@@ -53,16 +50,16 @@ struct Shapes {
         float depth = 1.0f;
 
         // how many sides / how round it will be
-        pyramidElements.reserve(sides * 3);
-        pyramidVertices.reserve(sides + 1);
+        pyramidElements.reserve(sides * 6);
+        pyramidVertices.reserve(sides + 2);
         pyramidVertices = {
-                // the tip of the cylinder
+                // the tip of the pyramid
                 {
                         .Position = {0.0f, 0.0f, depth},
                 },
-                // the center of the cylinder's base
+                // the center of the pyramid's base
                 {
-                        .Position = {0.0f, 0.0f, 0},
+                        .Position = {0.0f, 0.0f, 0.0f},
                 },
 
                 // ... the rest of the vertices will be generated
@@ -80,22 +77,20 @@ struct Shapes {
             });
 
             // draw the elements for the pyramid using the index of the specified vertices
-
-            // the index of the center of the circle
+            // the index of tip of the pyramid
             pyramidElements.emplace_back(0);
 
             // the index of the current vertex
             pyramidElements.emplace_back(i);
 
-            // the index of the next vertex
+//            // the index of the next vertex
             int nextVertexIndex = (i < sides + 1) ? i + 1 : 2;
             pyramidElements.emplace_back(nextVertexIndex);
 
-            // the elements for the bottom surface
+            // the index for the bottom surface
             pyramidElements.emplace_back(1);
             pyramidElements.emplace_back(i);
             pyramidElements.emplace_back(nextVertexIndex);
-
         }
 
     }
@@ -107,8 +102,8 @@ struct Shapes {
         // the distance from the base to the top
         float depth = 1.0f;
 
-        cylinderElements.reserve(sides * 3);
-        cylinderVertices.reserve(sides + 1);
+        cylinderElements.reserve(sides * 12);
+        cylinderVertices.reserve(sides * 7);
         cylinderVertices = {
                 { // the center of the prism's base
                     .Position = {0.0f, 0.0f, 0.0f}

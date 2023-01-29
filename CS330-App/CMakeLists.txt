@@ -6,7 +6,9 @@ find_package(OpenGL REQUIRED)
 file(GLOB_RECURSE SOURCES src/*.cpp)
 file(GLOB_RECURSE GLAD_SOURCES external/shared/glad/*.c)
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${GLAD_SOURCES} include/types.h include/shader.h src/shader.cpp src/mesh.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES} ${GLAD_SOURCES}
+        include/types.h include/shader.h include/camera.h
+        src/shader.cpp src/mesh.cpp src/camera.cpp)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE

@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "shader.h"
 #include "mesh.h"
+#include "camera.h"
 
 class Application {
 public:
@@ -23,4 +24,5 @@ private:
 	GLFWwindow* _window {nullptr};
     std::vector<Mesh> _meshes {};
     Shader _shader{};
+    Camera _camera{};
 };
