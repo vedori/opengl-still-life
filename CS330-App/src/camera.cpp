@@ -149,7 +149,7 @@ glm::mat4 Camera::Projection() {
     float farRange = 100.0f;
 
     if (_orthographicMode) {
-        return glm::ortho(-aspectRatio, aspectRatio, -1.0f,1.0f, nearRange, farRange);
+        return glm::ortho(-aspectRatio, aspectRatio, -1.0f,1.0f, -farRange, farRange);
     } else {
         // the perspective sets the fov, the aspect ratio and clipping range of the viewing box
         return glm::perspective(glm::radians(45.0f),aspectRatio,nearRange, farRange);
