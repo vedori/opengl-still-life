@@ -13,7 +13,7 @@ void Application::Run()
 		return;
 	}
 
-    // load the mesh and shader data
+    // loads data relevant to the scene
     load();
 
     // render loop
@@ -113,44 +113,44 @@ void Application::load()
 //
 //    // loads data for the objects in the scene
 //
-//    // create a pen with a pyramid and a cylinder
-//    Shapes::setPrismSides(20);
-//    Shapes::setPyramidSides(20);
-//    const float PEN_RADIUS = 0.03f;
-//    const float PEN_RADIUS_LENGTH_RATIO = 26.65f;
-//    const float PEN_HEIGHT = 1.0f;
-//    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements).GlobalPosition = {
-//            .Scale{PEN_RADIUS, PEN_RADIUS, PEN_RADIUS * 2},
-//            .Translation{-19.5f, PEN_HEIGHT, 2.02f},
-//            .RotationAxis {1.0f, 0.0f, 0.0f},
-//            .RotationAngle = glm::radians(180.0f)
-//    };
-//    _meshes.emplace_back(Shapes::cylinderVertices, Shapes::cylinderElements).GlobalPosition = {
-//            .Scale{PEN_RADIUS, PEN_RADIUS, PEN_RADIUS * PEN_RADIUS_LENGTH_RATIO},
-//            .Translation{-19.5f, PEN_HEIGHT, 0.15f}
-//    };
-//
-//    // places a plane for our scene
-//    _meshes.emplace_back(Shapes::planeVertices, Shapes::planeElements).GlobalPosition = {
-//            .Scale{3.5f, 3.5f, 3.5f},
-//            .Translation{-0.5f, 0.0f, -0.5f}
-//    };
+    // create a pen with a pyramid and a cylinder
+    Shapes::setPrismSides(20);
+    Shapes::setPyramidSides(20);
+    const float PEN_RADIUS = 0.03f;
+    const float PEN_RADIUS_LENGTH_RATIO = 26.65f;
+    const float PEN_HEIGHT = 1.0f;
+    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements).GlobalPosition = {
+            .Scale{PEN_RADIUS, PEN_RADIUS, PEN_RADIUS * 2},
+            .Translation{-19.5f, PEN_HEIGHT, 2.02f},
+            .RotationAxis {1.0f, 0.0f, 0.0f},
+            .RotationAngle = glm::radians(180.0f)
+    };
+    _meshes.emplace_back(Shapes::cylinderVertices, Shapes::cylinderElements).GlobalPosition = {
+            .Scale{PEN_RADIUS, PEN_RADIUS, PEN_RADIUS * PEN_RADIUS_LENGTH_RATIO},
+            .Translation{-19.5f, PEN_HEIGHT, 0.15f}
+    };
+
+    // places a plane for our scene
+    _meshes.emplace_back(Shapes::planeVertices, Shapes::planeElements).GlobalPosition = {
+            .Scale{3.5f, 3.5f, 3.5f},
+            .Translation{-0.5f, -0.001f, -0.5f}
+    };
 
     // test pyramid
-    Shapes::setPyramidSides(4);
-    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements).GlobalPosition = {
-            .Scale{0.5f, 1.0f, 0.5f},
-            .Translation{0.0f, 0.0f, -2.0f},
-            .RotationAxis{glm::vec3(1.0f,0.0f,0.0f)},
-            .RotationAngle = glm::radians(-90.0f),
-    };
+//    Shapes::setPyramidSides(4);
+//    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements).GlobalPosition = {
+//            .Scale{0.5f, 1.0f, 0.5f},
+//            .Translation{0.0f, 0.0f, -2.0f},
+//            .RotationAxis{glm::vec3(1.0f,0.0f,0.0f)},
+//            .RotationAngle = glm::radians(-90.0f),
+//    };
 
     // loads shaders
     _shader = Shader{"shaders/basic_shader.vert", "shaders/basic_shader.frag"};
 
-    // sets up the camera's position and sensitivity
-    _camera = Camera(glm::vec3(0.0f, 0.5f, 1.0f), 0.05f);
-//    _camera = Camera(glm::vec3(0.0f, 3.5f, 1.0f), 0.05f);
+    // sets up the camera's position
+    _camera = Camera(glm::vec3(0.0f, 0.2f, 1.0f));
+//    _camera = Camera(glm::vec3(0.0f, 3.5f, 1.0f), glm::vec3(0.0f, -4.0f, -1.0f));
 }
 
 void Application::draw() {
@@ -169,15 +169,10 @@ void Application::draw() {
         model = glm::translate(model, mesh.GlobalPosition.Translation);
         model = glm::rotate(model, mesh.GlobalPosition.RotationAngle,  mesh.GlobalPosition.RotationAxis);
 
-        // the projection view sets the fov, the aspect ratio and clipping range of the viewing box
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-                                      static_cast<float>(_width) / static_cast<float>(_height),
-                                      0.1f, 100.0f);
-
         // sends the matrices to the shader
         _shader.SetMat4("model", model);
         _shader.SetMat4("view", _camera.View());
-        _shader.SetMat4("projection", projection);
+        _shader.SetMat4("projection", Camera::Projection());
         _shader.Activate();
 
         mesh.Draw();
@@ -219,5 +214,7 @@ void Application::input()
     if (glfwGetKey(_window, GLFW_KEY_E) == GLFW_PRESS) {
         _camera.Move(Camera::Movement::DOWN);
     }
-	
+
+    // sets the last frame to the time this function runs in the render loop to standardize movement
+    Camera::CaptureFrame();
 }

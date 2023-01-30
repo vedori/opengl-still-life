@@ -2,12 +2,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 // The class keeps track of the framing, this standardizes the speed of movement
-float Camera::_lastFrame {0.0f};
-float Camera::_speed {20.0f};
+float Camera::_lastFrame {};
+float Camera::_speed {1.0f};
 float Camera::_sensitivity {0.05f};
 
-
-glm::vec3 Camera::_cameraFront {glm::vec3(0.0f, 0.0f, -1.0f)};
+// The offset for the front of the camera
+glm::vec3 Camera::_cameraFront {};
 
 // Values for calculating the viewing angle (pitch and yaw)
 float Camera::_lastX {};
@@ -15,8 +15,14 @@ float Camera::_lastY {};
 float Camera::_yaw {-90.0f};
 float Camera::_pitch {0.0f};
 
+// Determines whether the perspective is orthogonal
+bool Camera::_orthographicMode {false};
+
 // initializes the camera's position and initial values for some attributes
-Camera::Camera(glm::vec3 position, float sensitivity) : _cameraPos{position} {
+Camera::Camera(glm::vec3 position, glm::vec3 cameraView, float sensitivity) : _cameraPos{position} {
+    // sets the initial view to the cameraView
+    _cameraFront = cameraView;
+
     // The first value for _lastX and _lastY is the center of the screen
     int x = 0;
     int y = 0;
@@ -28,10 +34,10 @@ Camera::Camera(glm::vec3 position, float sensitivity) : _cameraPos{position} {
 
     // mouse scroll adjusts the camera speed
     glfwSetScrollCallback(glfwGetCurrentContext(), [](GLFWwindow *window, double xOffset, double yOffset) {
-        const float SPEED_INCREMENT = 1.0f;
-        const float HIGHEST_SPEED = 200.0f;
+        const float SPEED_INCREMENT = 0.05f;
+        const float HIGHEST_SPEED = 3.0f;
         if (yOffset < 0.0f) {
-            if (_speed - SPEED_INCREMENT > 0.0f) {
+            if (_speed - SPEED_INCREMENT * 2 > 0.0f) {
                 _speed -= SPEED_INCREMENT;
             }
         }
@@ -50,6 +56,7 @@ Camera::Camera(glm::vec3 position, float sensitivity) : _cameraPos{position} {
         Camera::_lastX = static_cast<float>(xPos);
         Camera::_lastY = static_cast<float>(yPos);
 
+        // applies the sensitivity to the offset
         xOffset *= Camera::_sensitivity;
         yOffset *= Camera::_sensitivity;
 
@@ -66,21 +73,33 @@ Camera::Camera(glm::vec3 position, float sensitivity) : _cameraPos{position} {
         }
 
         // sets the front matrix for the view
-        glm::vec3 front;
-        front.x = static_cast<float>(cos(glm::radians(Camera::_yaw)) * cos(glm::radians(Camera::_pitch)));
-        front.y = static_cast<float>(sin(glm::radians(Camera::_pitch)));
-        front.z = static_cast<float>(sin(glm::radians(Camera::_yaw)) * cos(glm::radians(Camera::_pitch)));
-        Camera::_cameraFront = glm::normalize(front);
+        {
+            using namespace glm;
+            vec3 front;
+            front.x = cos(radians(Camera::_yaw)) * cos(radians(Camera::_pitch));
+            front.y = sin(radians(Camera::_pitch));
+            front.z = sin(radians(Camera::_yaw)) * cos(radians(Camera::_pitch));
+            Camera::_cameraFront = normalize(front);
+        }
+    });
+
+    // switches the perspective to orthogonal mode when the key 'P' is released and vice versa
+    glfwSetKeyCallback(glfwGetCurrentContext(), [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        if (key == GLFW_KEY_P && action == GLFW_RELEASE) {
+            Camera::_orthographicMode = ! Camera::_orthographicMode;
+        }
     });
 }
 
 // returns the matrix of the calculated camera view
 glm::mat4 Camera::View() {
-    // standard timing for input
-    // the input is processed in the next render loop after the view hence the name lastFrame
-    _lastFrame = static_cast<float>(glfwGetTime());
-
     return glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
+}
+
+// standard timing for input
+// this standardizes movement
+void Camera::CaptureFrame() {
+    _lastFrame = static_cast<float>(glfwGetTime());
 }
 
 // calculates the camera position based on the direction given to this method
@@ -114,5 +133,25 @@ void Camera::Move(Camera::Movement movement) {
     }
     if (movement == Movement::DOWN) {
         _cameraPos -= _cameraUp * velocity;
+    }
+}
+
+glm::mat4 Camera::Projection() {
+    // The width and height of the screen
+    int width = 0;
+    int height = 0;
+    glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);
+
+    auto aspectRatio = static_cast<float>(width) / static_cast<float >(height);
+
+    // the z axis clipping range
+    float nearRange = 0.1f;
+    float farRange = 100.0f;
+
+    if (_orthographicMode) {
+        return glm::ortho(-aspectRatio, aspectRatio, -1.0f,1.0f, nearRange, farRange);
+    } else {
+        // the perspective sets the fov, the aspect ratio and clipping range of the viewing box
+        return glm::perspective(glm::radians(45.0f),aspectRatio,nearRange, farRange);
     }
 }

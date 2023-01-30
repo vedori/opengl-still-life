@@ -21,19 +21,19 @@ struct Shapes {
     static inline std::vector<Vertex> planeVertices = {
             {
                     .Position = {0.0f, 0.0f, 0.0f},
-                    .Color = {0.0f, 0.0f, 0.0f}
+                    .Color = {0.0f, 0.5f, 1.0f}
             },
             {
                     .Position = {0.0f, 0.0f, 1.0f},
-                    .Color = {0.0f, 0.0f, 0.0f}
+                    .Color = {0.0f, 0.0f, 1.0f}
             },
             {
                     .Position = {1.0f, 0.0f, 0.0f},
-                    .Color = {0.0f, 0.0f, 0.0f}
+                    .Color = {0.0f, 0.0f, 1.0f}
             },
             {
                     .Position = {1.0f, 0.0f, 1.0f},
-                    .Color = {0.0f, 0.0f, 0.0f}
+                    .Color = {0.0f, 0.5f, 1.0f}
             },
     };
 
@@ -83,7 +83,7 @@ struct Shapes {
             // the index of the current vertex
             pyramidElements.emplace_back(i);
 
-//            // the index of the next vertex
+            // the index of the next vertex
             int nextVertexIndex = (i < sides + 1) ? i + 1 : 2;
             pyramidElements.emplace_back(nextVertexIndex);
 
