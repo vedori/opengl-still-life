@@ -1,1 +1,4 @@
 cmake-build*/
+cmake-output/
+x64/
+.vs/

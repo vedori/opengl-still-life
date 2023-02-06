@@ -12,7 +12,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     // shader program
     ID = glCreateProgram();
 
-
     // compile shaders
     GLuint vertexShaderID, fragmentShaderID = 0;
     compileVShader(vertexShaderID, vShaderCode.c_str(), infoLog);
@@ -111,6 +110,10 @@ void Shader::SetInt(const char* name, int value) const {
 
 void Shader::SetFloat(const char* name, float value) const {
     glUniform1f(glGetUniformLocation(ID, name), value);
+}
+
+void Shader::SetVec2(const char* name, const glm::vec2& value) const {
+    glUniform2fv(glGetUniformLocation(ID, name), 1,  glm::value_ptr(value));
 }
 
 void Shader::SetMat4(const char* name, const glm::mat4& value) const {

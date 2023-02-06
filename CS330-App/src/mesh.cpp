@@ -1,6 +1,7 @@
 #include "mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &elements) {
+Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &elements, const Texture& texture) : _texture{texture} {
+//    std::string fileName = (textureFileName.empty()) ? "textures/default.jpg" : textureFileName;
     // bind the VAO and EBO for OpenGL to send mesh data to GPU
     // the VAO holds all subsequent VBOs and EBOs
     glGenVertexArrays(1, &_vertexArrayObject);
@@ -10,13 +11,15 @@ Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &elements) {
     GLuint vertexBufferObject;
     glGenBuffers(1, &vertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vertices.size() * sizeof(Vertex)), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vertices.size() * sizeof(Vertex)), vertices.data(),
+                 GL_STATIC_DRAW);
 
     // create EBO for OpenGL to send index data to GPU to avoid overhead resulting in overlapping lines
     GLuint elementBufferObject;
     glGenBuffers(1, &elementBufferObject);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(elements.size() * sizeof(uint32_t)), elements.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(elements.size() * sizeof(uint32_t)), elements.data(),
+                 GL_STATIC_DRAW);
 
     // enables OpenGL to know how to connect the shader attributes to the vertex data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(offsetof(Vertex, Position)));
@@ -34,6 +37,11 @@ Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &elements) {
 }
 
 void Mesh::Draw() const {
+    // binds the specified texture to the object via its ID
+    glBindTexture(GL_TEXTURE_2D, _texture.TextureId);
+
+
+    // draws the object
     glBindVertexArray(_vertexArrayObject);
     glDrawElements(GL_TRIANGLES, static_cast<int>(_elementCount), GL_UNSIGNED_INT, nullptr);
 }

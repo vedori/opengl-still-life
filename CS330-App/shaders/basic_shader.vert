@@ -5,6 +5,7 @@ layout (location = 2) in vec3 normal;
 layout (location = 3) in vec2 uv;
 
 out vec3 vertexRGB;
+out vec2 vertexUV;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -14,4 +15,5 @@ void main ()
 {
     gl_Position = projection * view * model * vec4(position, 1.0f);
     vertexRGB = color;
+    vertexUV = uv;
 }

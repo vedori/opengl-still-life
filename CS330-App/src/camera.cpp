@@ -3,7 +3,7 @@
 
 // The class keeps track of the framing, this standardizes the speed of movement
 float Camera::_lastFrame {};
-float Camera::_speed {1.0f};
+float Camera::_speed {5.0f};
 float Camera::_sensitivity {0.05f};
 
 // The offset for the front of the camera
@@ -34,8 +34,8 @@ Camera::Camera(glm::vec3 position, glm::vec3 cameraView, float sensitivity) : _c
 
     // mouse scroll adjusts the camera speed
     glfwSetScrollCallback(glfwGetCurrentContext(), [](GLFWwindow *window, double xOffset, double yOffset) {
-        const float SPEED_INCREMENT = 0.05f;
-        const float HIGHEST_SPEED = 3.0f;
+        const float SPEED_INCREMENT = 0.5f;
+        const float HIGHEST_SPEED = 15.0f;
         if (yOffset < 0.0f) {
             if (_speed - SPEED_INCREMENT * 2 > 0.0f) {
                 _speed -= SPEED_INCREMENT;
@@ -146,10 +146,14 @@ glm::mat4 Camera::Projection() {
 
     // the z axis clipping range
     float nearRange = 0.1f;
-    float farRange = 100.0f;
+    float farRange = 150.0f;
+
+    // scaling the orthographic viewing box to fit the overall scale of the scene
+    float orthScale = 9.0f;
 
     if (_orthographicMode) {
-        return glm::ortho(-aspectRatio, aspectRatio, -1.0f,1.0f, -farRange, farRange);
+        return glm::ortho(-aspectRatio * orthScale, aspectRatio * orthScale, -orthScale,orthScale,
+                          -farRange, farRange);
     } else {
         // the perspective sets the fov, the aspect ratio and clipping range of the viewing box
         return glm::perspective(glm::radians(45.0f),aspectRatio,nearRange, farRange);
