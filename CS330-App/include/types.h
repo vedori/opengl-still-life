@@ -45,33 +45,10 @@ struct Shapes {
             2, 3, 1
     };
 
-    // sets the number of divisions in the texture tiling
-    static void setPlaneTiling(float divisions) {
-        planeVertices.clear();
-        planeVertices = {
-                { // bottom left corner
-                        .Position = {0.0f, 0.0f, 0.0f},
-                        .Uv = {0.0f, 0.0f},
-                },
-                { // top left corner
-                        .Position = {0.0f, 0.0f, 1.0f},
-                        .Uv = {0.0f, divisions},
-                },
-                { // bottom right corner
-                        .Position = {1.0f, 0.0f, 0.0f},
-                        .Uv = {divisions, 0.0f},
-                },
-                { // top right corner
-                        .Position = {1.0f, 0.0f, 1.0f},
-                        .Uv = {divisions, divisions},
-                },
-        };
-    }
-
     static inline std::vector<Vertex> pyramidVertices {};
     static inline std::vector<uint32_t> pyramidElements {};
 
-    static void setPyramidSides (int sides, const glm::vec2& uvScale = {1.0f, 1.0f}) {
+    static void setPyramidSides (int sides) {
         // clears data from any previous calls to this function
         pyramidVertices.clear();
         pyramidElements.clear();
@@ -80,11 +57,11 @@ struct Shapes {
                 // the tip of the pyramid
                 {
                         .Position = {0.0f, 0.0f, 1.0f},
-                        .Uv = glm::vec2(1.0f, 1.0f) * uvScale,
+                        .Uv = {1.0f, 1.0f},
                 },
                 // the center of the pyramid's base
                 {
-                        .Uv = glm::vec2(1.0f, 1.0f) * uvScale,
+                        .Uv = {1.0f, 1.0f},
                 },
 
                 // ... the rest of the vertices will be generated
@@ -102,7 +79,7 @@ struct Shapes {
             // vertices for the base of the pyramid
             pyramidVertices.emplace_back(Vertex {
                     .Position = {coordinates, 0.0f},
-                    .Uv = glm::vec2(uvXPos, 0.0f) * uvScale,
+                    .Uv = {uvXPos, 0.0f},
             });
 
             // draw the elements for the pyramid using the index of the specified vertices
@@ -130,7 +107,7 @@ struct Shapes {
     static inline std::vector<Vertex> prismVertices{};
     static inline std::vector<uint32_t> prismElements {};
 
-    static void setPrismSides(int sides, const glm::vec2& uvScale = {1.0f, 1.0f}) {
+    static void setPrismSides(int sides) {
         // clears data from any previous calls to this function
         prismVertices.clear();
         prismElements.clear();
@@ -138,11 +115,11 @@ struct Shapes {
         prismVertices = {
                 { // the center of the prism's base
                     .Position = {0.0f, 0.0f, 0.0f},
-                    .Uv = glm::vec2(0.5f, 0.5f) * uvScale,
+                    .Uv = {0.5f, 0.5f},
                 },
                 { // the center of the prism's top
                     .Position = {0.0f, 0.0f, 1.0f},
-                    .Uv = glm::vec2(0.5f, 0.5f) * uvScale,
+                    .Uv = {0.5f, 0.5f},
                 }
         };
 
@@ -157,13 +134,13 @@ struct Shapes {
             // vertices for the base of the prism
             prismVertices.emplace_back(Vertex {
                     .Position = {glm::cos(angle), glm::sin(angle), 0.0f},
-                    .Uv = glm::vec2(uvXPos, 0.0f) * uvScale,
+                    .Uv = {uvXPos, 0.0f},
             });
 
             //vertices for the top of the prism
             prismVertices.emplace_back(Vertex {
                     .Position = {glm::cos(angle), glm::sin(angle), 1.0f},
-                    .Uv = glm::vec2(uvXPos, 1.0f) * uvScale,
+                    .Uv = {uvXPos, 1.0f},
             });
 
             // draw the elements for the prism using the index of the specified vertices

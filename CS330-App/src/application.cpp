@@ -4,8 +4,6 @@
 #include "application.h"
 #include "types.h"
 
-// defines a macro to set the first texture to the default one
-
 
 Application::Application(std::string WindowTitle, int Width, int Height) : _applicationName{std::move( WindowTitle )}, _width{ Width }, _height{ Height } {}
 
@@ -28,11 +26,10 @@ void Application::Run()
 			break;
 		}
 
-        // Measure speed (60 fps => 16.6666ms, 30 fps => 33.33333ms
+        // measure speed (60 fps => 16.6666ms, 30 fps => 33.33333ms
         double currentTime = glfwGetTime();
         nbFrames++;
-        if ( currentTime - lastTime >= 1.0 ){ // If last printf() was more than 1 sec ago
-            // printf and reset timer
+        if ( currentTime - lastTime >= 1.0 ){ // if last printf() was more than 1 sec ago, then printf and reset timer
 //            printf("%f ms/frame\n", 1000.0/double(nbFrames));
             nbFrames = 0;
             lastTime += 1.0;
@@ -103,46 +100,38 @@ void Application::load()
     _shader = Shader{"shaders/basic_shader.vert", "shaders/basic_shader.frag"};
 
     // config textures
-    const auto brickTexture = Texture(_shader, "textures/bricks.jpg");
+    const auto brickTexture = Texture(_shader, "textures/bricks.jpg", {5.0f, 1.0f});
     const auto plasticTexture =  Texture(_shader, "textures/plastic.jpg");
-    const auto bandannaTexture =  Texture(_shader, "textures/bandanna.jpg");
+    const auto bandannaTexture =  Texture(_shader, "textures/bandanna.jpg", {2.0f, 2.0f});
 
     // Loads data for the objects in the scene ...
 
     // create a pen with a pyramid and a cylinder and a texture tiling of 5
-    Shapes::setPrismSides(44, {5.0f,5.0f});
-    Shapes::setPyramidSides(44, {5.0f, 5.0f});
+    Shapes::setPrismSides(44);
+    Shapes::setPyramidSides(44);
     const float PEN_RADIUS = 0.3f;
     const float PEN_RADIUS_LENGTH_RATIO = 26.65f;
     const float PEN_X = -19.5f;
     const float PEN_Y = 1.0f;
-    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements, plasticTexture)
-    .GlobalPosition = {
+    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements, plasticTexture).GlobalPosition = {
             .Scale{PEN_RADIUS, PEN_RADIUS, PEN_RADIUS * 2},
             .Translation{PEN_X, PEN_Y, 1.35f},
             .RotationAxis {1.0f, 0.0f, 0.0f},
             .RotationAngle = glm::radians(180.0f)
     };
-    _meshes.emplace_back(Shapes::prismVertices, Shapes::prismElements, plasticTexture)
-    .GlobalPosition = {
+    _meshes.emplace_back(Shapes::prismVertices, Shapes::prismElements, plasticTexture).GlobalPosition = {
             .Scale{PEN_RADIUS, PEN_RADIUS, PEN_RADIUS * PEN_RADIUS_LENGTH_RATIO},
             .Translation{PEN_X, PEN_Y, 0.1f}
     };
 
-
      // places a plane for our scene
-//     Shapes::setPlaneTiling(2.0f);
-    _meshes.emplace_back(Shapes::planeVertices, Shapes::planeElements, bandannaTexture )
-    .GlobalPosition = {
+    _meshes.emplace_back(Shapes::planeVertices, Shapes::planeElements, bandannaTexture ).GlobalPosition = {
             .Scale{30.5f, 30.5f, 30.5f},
             .Translation{-0.5f, -0.001f, -0.5f}
     };
 
-    // test pyramid with texture tiling
-    auto testTile = 4.0f;
-    Shapes::setPyramidSides(4, {testTile, testTile});
-    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements, brickTexture)
-    .GlobalPosition = {
+    // test pyramid
+    _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements, brickTexture).GlobalPosition = {
             .Scale{2.0f, 4.0f, 2.0f},
             .Translation{0.0f, 0.5f, -4.0f},
             .RotationAxis{glm::vec3(1.0f,0.0f,0.0f)},
@@ -174,7 +163,6 @@ void Application::draw() {
         _shader.Activate();
 
         mesh.Draw();
-
     }
 
     // check and call events and swap the buffers

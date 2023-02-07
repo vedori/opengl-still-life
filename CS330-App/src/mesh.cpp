@@ -38,8 +38,11 @@ Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &elements, const
 
 void Mesh::Draw() const {
     // binds the specified texture to the object via its ID
+    // subsequent texture configs point to this ID
     glBindTexture(GL_TEXTURE_2D, _texture.TextureId);
 
+    // binds the texture to the shader
+    _texture.Bind();
 
     // draws the object
     glBindVertexArray(_vertexArrayObject);

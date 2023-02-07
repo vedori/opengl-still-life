@@ -14,11 +14,11 @@
 //}
 
 // binds the texture to the shader
-void Texture::Bind() const{
-    _shader.SetInt("tex0", static_cast<int>(TextureId));
+void Texture::Bind() const {
+    _shader.SetVec2("uvScale", UvScale);
 }
 
-Texture::Texture(const Shader& shader, const std::string& filePath) : _shader{shader} {
+Texture::Texture(const Shader& shader, const std::string& filePath, const glm::vec2& uvScale) : _shader{shader}, UvScale{uvScale} {
     // sets up and binds the texture to OpenGL
     glGenTextures(1, &TextureId);
     glActiveTexture(GL_TEXTURE0);
@@ -45,7 +45,6 @@ Texture::Texture(const Shader& shader, const std::string& filePath) : _shader{sh
         else
             std::cout << "Cannot handle image with " << nChannels << " channels" << std::endl;
         glGenerateMipmap(GL_TEXTURE_2D);
-        Bind();
     }
     // frees the data and resets the active texture
     stbi_image_free(data);

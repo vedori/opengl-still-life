@@ -1,6 +1,6 @@
 #include "application.h"
 
 int main() {
-	Application app { "Phil Oriuwa CS330 Project", 800, 600 };
+	Application app { "Phil Oriuwa CS330 Module Five Milestone", 800, 600 };
 	app.Run();
 }
