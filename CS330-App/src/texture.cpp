@@ -15,10 +15,13 @@
 
 // binds the texture to the shader
 void Texture::Bind() const {
-    _shader.SetVec2("uvScale", UvScale);
+    // binds the specified texture to the object via its ID
+    // subsequent texture configs point to this ID
+    glBindTexture(GL_TEXTURE_2D, TextureId);
+    _shader.SetVec2("uvScale", _uvScale);
 }
 
-Texture::Texture(const Shader& shader, const std::string& filePath, const glm::vec2& uvScale) : _shader{shader}, UvScale{uvScale} {
+Texture::Texture(const Shader& shader, const std::string& filePath, const glm::vec2& uvScale) : _shader{shader}, _uvScale{uvScale} {
     // sets up and binds the texture to OpenGL
     glGenTextures(1, &TextureId);
     glActiveTexture(GL_TEXTURE0);
@@ -49,5 +52,9 @@ Texture::Texture(const Shader& shader, const std::string& filePath, const glm::v
     // frees the data and resets the active texture
     stbi_image_free(data);
     glActiveTexture(GL_TEXTURE0);
+}
+
+const Shader &Texture::GetShader() {
+    return _shader;
 }
 

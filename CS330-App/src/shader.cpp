@@ -2,12 +2,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath) {
+Shader::Shader(const std::filesystem::path& vertexPath, const std::filesystem::path& fragmentPath) {
     std::string vShaderCode = readShaderFile(vertexPath);
     std::string fShaderCode = readShaderFile(fragmentPath);
 
     // char buffer for logging
-    char infoLog[_logSize];
+    char infoLog[LOG_SIZE];
 
     // shader program
     ID = glCreateProgram();
@@ -28,8 +28,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glDeleteShader(fragmentShaderID);
 }
 
-std::string Shader::readShaderFile(const char* shaderPath) {
-    // 1. retrieve the vertex/fragment source code from filePath
+std::string Shader::readShaderFile(const std::filesystem::path& shaderPath) {
+    // retrieve the vertex/fragment source code from filePath
     std::string code;
     std::ifstream shaderFile;
 
@@ -63,7 +63,7 @@ void Shader::compileVShader(GLuint& vertexShaderID, const char* code, char *log)
     glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
     if(!success)
     {
-        glGetShaderInfoLog(vertexShaderID, _logSize, nullptr, log);
+        glGetShaderInfoLog(vertexShaderID, LOG_SIZE, nullptr, log);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
     }
 }
@@ -78,7 +78,7 @@ void Shader::compileFShader(GLuint& fragmentShaderID, const char* code, char *lo
     glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &success);
     if(!success)
     {
-        glGetShaderInfoLog(fragmentShaderID, _logSize, nullptr, log);
+        glGetShaderInfoLog(fragmentShaderID, LOG_SIZE, nullptr, log);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << log << std::endl;
     }
 }
@@ -91,12 +91,12 @@ void Shader::linkProgram(char *log) const {
     glGetProgramiv(ID, GL_LINK_STATUS, &success);
     if(!success)
     {
-        glGetProgramInfoLog(ID, _logSize, nullptr, log);
+        glGetProgramInfoLog(ID, LOG_SIZE, nullptr, log);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << log << std::endl;
     }
 }
 
-void Shader::Activate() const {
+void Shader::Bind() const {
     glUseProgram(ID);
 }
 
@@ -114,6 +114,10 @@ void Shader::SetFloat(const char* name, float value) const {
 
 void Shader::SetVec2(const char* name, const glm::vec2& value) const {
     glUniform2fv(glGetUniformLocation(ID, name), 1,  glm::value_ptr(value));
+}
+
+void Shader::SetVec3(const char* name, const glm::vec3& value) const {
+    glUniform3fv(glGetUniformLocation(ID, name), 1,  glm::value_ptr(value));
 }
 
 void Shader::SetMat4(const char* name, const glm::mat4& value) const {

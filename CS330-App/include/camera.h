@@ -32,6 +32,9 @@ public:
     // calculates view when given a movement
     void Move(Movement movement);
 
+    // gets the camera position
+    glm::vec3& GetPosition();
+
 private:
     glm::vec3 _cameraPos;
     static float _speed;

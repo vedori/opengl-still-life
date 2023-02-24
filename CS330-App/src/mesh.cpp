@@ -1,7 +1,17 @@
 #include "mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &elements, const Texture& texture) : _texture{texture} {
-//    std::string fileName = (textureFileName.empty()) ? "textures/default.jpg" : textureFileName;
+#include <utility>
+
+Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &elements, Texture texture) : _texture{std::move(texture)} {
+    // generates a normal vector given three vertices
+    for (auto i = 0; i < elements.size(); i += 3) {
+        auto v1Index = elements[i];
+        auto v2Index = elements[i + 1];
+        auto v3Index = elements[i + 2];
+
+        Shapes::UpdateNormals(vertices[v1Index], vertices[v2Index], vertices[v3Index]);
+    }
+
     // bind the VAO and EBO for OpenGL to send mesh data to GPU
     // the VAO holds all subsequent VBOs and EBOs
     glGenVertexArrays(1, &_vertexArrayObject);
@@ -37,14 +47,14 @@ Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint32_t> &elements, const
 }
 
 void Mesh::Draw() const {
-    // binds the specified texture to the object via its ID
-    // subsequent texture configs point to this ID
-    glBindTexture(GL_TEXTURE_2D, _texture.TextureId);
-
     // binds the texture to the shader
     _texture.Bind();
 
     // draws the object
     glBindVertexArray(_vertexArrayObject);
     glDrawElements(GL_TRIANGLES, static_cast<int>(_elementCount), GL_UNSIGNED_INT, nullptr);
+}
+
+const Shader& Mesh::GetShader() {
+    return _texture.GetShader();
 }

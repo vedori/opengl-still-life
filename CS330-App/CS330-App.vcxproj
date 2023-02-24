@@ -77,10 +77,10 @@
     <IncludePath>$(ProjectDir)external\shared\glad\include;$(ProjectDir)external\shared\glm;$(ProjectDir)external\vslibs\glfw-64\include;$(ProjectDir)external\shared\stb;$(ProjectDir)include;$(ProjectDir)shaders;$(ProjectDir)textures;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)external\shared\glad\include;$(ProjectDir)external\shared\glm;$(ProjectDir)external\vslibs\glfw-64\include;$(ProjectDir)external\shared\stb;$(ProjectDir)include;$(ProjectDir)shaders;$(ProjectDir)textures;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)external\shared\glad\include;$(ProjectDir)external\shared\glm;$(ProjectDir)external\vslibs\glfw-64\include;$(ProjectDir)external\shared\stb;$(ProjectDir)include;$(ProjectDir)assets\shaders;$(ProjectDir)assets\textures;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)external\shared\glad\include;$(ProjectDir)external\shared\glm;$(ProjectDir)external\vslibs\glfw-64\include;$(ProjectDir)external\shared\stb;$(ProjectDir)include;$(ProjectDir)shaders;$(ProjectDir)textures;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)external\shared\glad\include;$(ProjectDir)external\shared\glm;$(ProjectDir)external\vslibs\glfw-64\include;$(ProjectDir)external\shared\stb;$(ProjectDir)include;$(ProjectDir)assets\shaders;$(ProjectDir)assets\textures;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -163,7 +163,7 @@
     <ClInclude Include="include\application.h" />
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\mesh.h" />
-    <ClInclude Include="include\shader.h" />
+    <ClInclude Include="include\_shader.h" />
     <ClInclude Include="include\texture.h" />
     <ClInclude Include="include\types.h" />
   </ItemGroup>

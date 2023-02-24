@@ -96,6 +96,10 @@ glm::mat4 Camera::View() {
     return glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
 }
 
+glm::vec3& Camera::GetPosition() {
+    return _cameraPos;
+};
+
 // standard timing for input
 // this standardizes movement
 void Camera::CaptureFrame() {

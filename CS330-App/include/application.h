@@ -23,6 +23,10 @@ private:
 	int _height {};
 	GLFWwindow* _window {nullptr};
     std::vector<Mesh> _meshes {};
+    std::vector<Texture> _textures {};
     Shader _shader{};
+    Shader _lampShader{};
+    DirectionalLight _dLight;
+    PointLight _pLight;
     Camera _camera{};
 };
