@@ -1,0 +1,4 @@
+# CS330
+- Working on this project has been a worthwhile experience. I had no prior experience using OpenGL, so understanding how shaders and different buffer structures can be used to draw a 3D scene in OpenGL was interesting. When I was designing this software, I thought of building modular components that could be used to create a cohesive program. This helps me delineate functionality and understand specific components.
+- There was a lot of iteration in my development, when learning a new framework, it is not expected that the first code you write will be perfect. I also had to refactor a good amount of my code to make it more streamlined.
+- The most important skill I acquired while learning computational graphics was realizing how much can be learned in a shorter period of time. Applying knowledge to a concrete project is something that I can use in my future professional life.
